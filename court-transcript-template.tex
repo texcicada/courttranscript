@@ -50,11 +50,24 @@ vmargin = 1in
 %https://tex.stackexchange.com/questions/364494/whats-the-best-way-to-explode-a-string-into-characters-process-each-character
 %\def\zz#1{\def\zzsep{}\zzz#1\relax}
 %\def\zzz#1{\ifx\relax#1\else\zzsep\def\zzsep{+}\fbox{#1}\expandafter\zzz\fi}
-\newcommand\zzaction{\llap{\raisebox{-1.2ex}{-}}}
+\newcommand\myhyphen{\raisebox{-1.2ex}{-}}
+\newcommand\myunderscore{{\_}}
+\newcommand\myequalsign{\raisebox{-1.4ex}{=}}
+\newcommand\myequalsignb{\raisebox{-1.4ex}{\textcolor{red}{=}}}
+\newcommand\myunderlinechar{\myhyphen}
+\newcommand\zzaction{\llap{\myunderlinechar}}
+\newcommand\zzactionb{\llap{\myequalsign}}
+\newcommand\zzactionc{\llap{\myequalsignb}}
+\newcommand\myzzaction{}
+%
+% each call to zz will have to def myzzaction appropriately
 \def\zz#1{\def\zzsep{}\zzz#1\relax}
-\def\zzz#1{\ifx\relax#1\else\def\zzsep{\zzaction}#1\zzsep\expandafter\zzz\fi}
+\def\zzz#1{\ifx\relax#1\else\def\zzsep{\myzzaction}#1\zzsep\expandafter\zzz\fi}
 %This is used to ``underline'' text, like with a typewriter.
 %
+\def\zzd#1{\def\zzsep{}\zzzd#1\relax}
+\def\zzzd#1{\ifx\relax#1\else\zzsep\def\zzsep{\myzzaction}#1\expandafter\zzzd\fi}
+%This is used to ``split'' text, as when spelling.
 %============================================
 % Create a new speaker command
 \newcommand\definenewnamec[2]{%
@@ -152,8 +165,8 @@ vmargin = 1in
 %long way of tt underlining::
 %\newcommandqttran{\speakere{\ud{T}\ud{r}\ud{a}\ud{n}\ud{s}\ud{c}\ud{r}\ud{i}\ud{p}\ud{t}}}%
 %shorter way: zz{}
-\newcommandqttran{\speakere{\zz{Transcript}}}%
-\newcommandqthead[1]{\speakere{\zz{#1}}}%
+\newcommandqttran{\renewcommand\myzzaction{\zzaction}\speakere{\zz{Transcript}}}%
+\newcommandqthead[1]{\renewcommand\myzzaction{\zzaction}\speakere{\zz{#1}}}%
 \newcommandqtcomm[1]{\toEolnComment{#1}}
 \newcommandqtgg[1]{\toEolnDescription{#1}}
 \newcommandqtmm[1]{\toEolnMatter{#1}}
@@ -163,6 +176,10 @@ vmargin = 1in
 \newcommandqtname[2]{\definenewnamec{#1}{\speaker{#2}}}% a=B
 \newcommandqtnamer[2]{\redefinenewnamec{#1}{\speaker{#2}}}% a=C
 
+\newcommandqtem[1]{\renewcommand\myzzaction{\zzaction}\zz{#1}}%
+\newcommandqtemm[1]{\renewcommand\myzzaction{\zzactionb}\zz{#1}}%
+\newcommandqtemmm[1]{\renewcommand\myzzaction{\zzactionc}\zz{#1}}%
+\newcommandqtspell[1]{\renewcommand\myzzaction{-}\zzd{#1}}%
 
 % Introduction
 \newcommandqtcc[1]{\speakerb[#1]{the court}}
@@ -196,6 +213,9 @@ vmargin = 1in
 \newcommandqtresume{\gendescd{court resumes~}}
 \newcommandqtv{\gendesc{voices overlapping}}
 \newcommandqti{\gendescb{inaudible}}
+\newcommandqtim{\gendescb{mumbles}}
+\newcommandqtin{\gendescb{incompehensible}}
+\newcommandqtis{\gendescb{softly}}
 \newcommandqtlp{\gendescb{long pause}}
 \newcommandqtu{\gendescb{?}}%uncertain
 \newcommandqtl{\gendescb{speaks in foreign language}}
@@ -246,24 +266,27 @@ qttran
 qcomm{Something is about to happen.}
 qtcomm This comment is defined by its line, rather than by braces.
 
+qtcc{judge gavel} How do you plead? qtd I didn't do it. qtp Oh yes he did. qtdd I object! qtc Sustained! qtw Oh no he didn't. qtj  Not guilty! 
 
-qtcc{judge gavel} How do you plead?
-qtd I didn't do it.
-qtp Oh yes he did.
-qtdd I object!
-qtc Sustained!
-qtw Oh no he didn't.
-qtj  Not guilty!
+qcomm{The case is finished.} qtd I'm so happy. Now to give a long speech thanking the jury: \ldots qtp qquite qquickly. Quietly qquietly. qtu 
+ qtww{professor knowall} Yes, that's right. qtc You may go now. Next case! qtpp qti qtc Switch on your microphone, Counsel. qtv qtppp{Slicker Greenhorn} I apologise for that,  qyh. I'm here to represent the plaintiff in qta qts qtc Order in the Court! qtpp qtb to represent qtc Remove that rapscallion from the rafters! Call the next witness. qtww{el zorro} qtl qttr I am known as The Fox qtu qtpp We know who you are. Now, qtlol qtc Time for a short recess. qtadjourn 11:18 am qtbreak qtresume 11:20 am qtc Now, you realise you are still under oath? qtw Yes qyh. qtend
 
-qcomm{The case is finished.}
-qtd I'm so happy. Now to give a long speech thanking the jury: \ldots
+The foregoing was produced by:
+\begin{framed}\begin{qquotation}
+qqtmm party a and party b\\
+qqtcrt supreme court of xyz\\
+qqtbench name j\\
+qqtdate 07 aug 2020\\
+qqttran\\
+qqcomm\{Something is about to happen.\}\\
+qqtcomm This comment is defined by its line, rather than by braces.\\
+\ \\
+qqtcc\{judge gavel\} How do you plead? qqtd I didn't do it. qqtp Oh yes he did. qqtdd I object! qqtc Sustained! qqtw Oh no he didn't. qqtj  Not guilty!\\ 
+\ \\
+qqcomm\{The case is finished.\} qqtd I'm so happy. Now to give a long speech thanking the jury: \textbackslash ldots qqtp qqqquite qqqquickly. Quietly qqqquietly. qqtu 
+ qqtww\{professor knowall\} Yes, that's right. qqtc You may go now. Next case! qqtpp qqti qqtc Switch on your microphone, Counsel. qqtv qqtppp\{Slicker Greenhorn\} I apologise for that,  qqyh. I'm here to represent the plaintiff in qqta qqts qqtc Order in the Court! qqtpp qqtb to represent qqtc Remove that rapscallion from the rafters! Call the next witness. qqtww\{el zorro\} qqtl qqttr I am known as The Fox qqtu qqtpp We know who you are. Now, qqtlol qqtc Time for a short recess. qqtadjourn 11:18 am qqtbreak qqtresume 11:20 am qqtc Now, you realise you are still under oath? qqtw Yes qqyh. qqtend
+\end{qquotation}\end{framed}
 
-qtp qquite qquickly. Quietly qquietly. qtu 
-
-qtww{professor knowall} Yes, that's right.
-qtc You may go now. Next case!
-qtpp qti qtc Switch on your microphone, Counsel. qtv qtppp{Slicker Greenhorn} I apologise for that,  qyh. I'm here to represent the plaintiff in qta qts qtc Order in the Court!
-qtpp qtb to represent qtc Remove that rapscallion from the rafters! Call the next witness. qtww{el zorro} qtl qttr I am known as The Fox qtu qtpp We know who you are. Now, qtlol qtc Time for a short recess. qtadjourn 11:18 am qtbreak qtresume 11:20 am qtc Now, you realise you are still under oath? qtw Yes qyh. qtend
 
 \newpage
 qthead{INTRODUCTION} This template, more-or-less standalone, and inspired by some answers to a qquestion on \TeX\ Stack Exchange,\footnote{{https://tex.stackexchange.com/qquestions/557680/fastest-typed-latex-template-for-live-conversations}} provides some shorthand commands for touch-type transcription of a (fast-moving) conversation in court, with the letter \ccol{qq} being defined as an escape character to take some of the typing load off the \ccol{\textbackslash}\ key (albeit at the other end of the keyboard). To get an ordinary qq, double it like this qqqq. And \ccol{\textbackslash} can still be used as the escape character. This  \ccol{qq} method will eventually clash with some command or package somewhere if any are added into the code, but, within its own space, it works well enough. Familiarity with \TeX\  layout is an advantage.
@@ -318,9 +341,20 @@ qqtre & qtre \\
 qqta & qta \\ 
 qqtb & qtb \\ 
 qqti & qti \\ 
+qqtim & qtim \\ 
+qqtin & qtin \\ 
+qqtis & qtis \\ 
 qqtlp & qtlp \\
 qqtl & qtl \\ 
-qqtu & qtu \\ 
+qqtu & qtu \\
+\end{tabular}
+\bigskip
+
+\noindent\begin{tabular}{ll}
+qqtem\{emphasis\} & qtem{emphasis} \\
+qqtemm\{more\textbackslash\ emphasis\} & qtemm{more\ emphasis} \\
+qqtemmm\{strongest\textbackslash\ emphasis\} & qtemmm{strongest\ emphasis} \\
+qqtspell\{spell\} & qtspell{spell} \\ 
 \end{tabular}
 
 
@@ -350,8 +384,8 @@ qqtresume & qtresume \\
 
 \newpage
 \subsection{Structure}
-qqtran qttran
-qqthead\{HEADING\} qthead{HEADING}
+\ \par qqtran\\ qttran
+qqthead\{HEADING\}\\ qthead{HEADING}
 
 qqtmm casename
 qtmm casename
@@ -362,14 +396,14 @@ qtcrt court name
 qqtbench presiding judge(s)/justice(s)
 qtbench presiding judge(s)/justice(s)
 
-qqtdate a date
-qtdate a date
+qqtdate hearing date
+qtdate hearing date
 
 
 \newpage
 
 \subsection{Events}
-
+\ \par
 qqtg\{Generic description\}
 
 qtg{Generic description}
@@ -390,6 +424,13 @@ qqtend qtend
 \begin{tabular}{ll}
 Command & Display \\
 qqcomm\{Comment\} & qcomm{Comment} \\ 
+\end{tabular}
+\bigskip
+
+\noindent These are for use on first introduction. Subseqquently, role or defined name may be used.\bigskip
+
+\noindent\begin{tabular}{ll}
+Command & Display \\
 qqtcc\{name\} & qtcc{name} \\ 
 \\
 qqtpx\{name\} & qtpx{name} \\ 
