@@ -1,0 +1,488 @@
+%% expl3 is now part of the kernel,
+%% and has commands containing `q` (e.g., ..._set_eq:...)
+%%  q 71
+%%  ¶ B6
+%%  
+\documentclass{article}
+%============================================
+%from https://tex.stackexchange.com/¶uestions/557680/fastest-typed-latex-template-for-live-conversations
+\usepackage{geometry,eso-pic,fancyhdr}
+\geometry{
+paper = letterpaper, 
+hmargin = 1.5in,
+vmargin = 1in
+}
+\usepackage[pagewise]{lineno}
+\linenumbers % Add line numbers to document
+\setlength{\linenumbersep}{1in}% Move line numbers away from text
+\renewcommand{\linenumberfont}{\normalsize\ttfamily}
+% Add rules to outside of text block
+\AddToShipoutPictureBG{%
+\AtTextLowerLeft{%
+% Left rule
+\makebox[0pt][r]{\rule[-.5\paperheight]{.4pt}{2\paperheight}\hspace{0.8in}}%
+}%
+\AtTextLowerLeft{%
+% Right rule
+\hspace*{\textwidth}%
+\makebox[0pt][l]{\hspace{0.4in}\rule[-.5\paperheight]{.4pt}{2\paperheight}}%
+}%
+}
+\fancyhf{}% Clear header/footer
+\renewcommand{\headrulewidth}{0pt}% Remove header rule
+% \renewcommand{\footrulewidth}{0pt}% Remove footer rule (default)
+\fancyfoot[R]{\ttfamily\thepage}
+\pagestyle{fancy}
+\AtBeginDocument{%
+\ttfamily
+\thispagestyle{fancy}
+\raggedright
+\setlength{\parindent}{15pt}
+\setlength{\parskip}{\smallskipamount}
+}
+
+%
+%============================================
+%\usepackage{xparse}%for document command
+\usepackage{xurl}%for url
+\usepackage{xcolor}%for blue text
+\usepackage{framed}%for framed ¶uotation
+
+%============================================
+\newcommand\ccol[1]{\textcolor{blue}{#1}}
+%============================================
+% DC iterator
+%https://tex.stackexchange.com/¶uestions/364494/whats-the-best-way-to-explode-a-string-into-characters-process-each-character
+%\def\zz#1{\def\zzsep{}\zzz#1\relax}
+%\def\zzz#1{\ifx\relax#1\else\zzsep\def\zzsep{+}\fbox{#1}\expandafter\zzz\fi}
+\newcommand\myhyphen{\raisebox{-1.2ex}{-}}
+\newcommand\myunderscore{{\_}}
+\newcommand\myequalsign{\raisebox{-1.4ex}{=}}
+\newcommand\myequalsignb{\raisebox{-1.4ex}{\textcolor{red}{=}}}
+\newcommand\myunderlinechar{\myhyphen}
+\newcommand\zzaction{\llap{\myunderlinechar}}
+\newcommand\zzactionb{\llap{\myequalsign}}
+\newcommand\zzactionc{\llap{\myequalsignb}}
+\newcommand\myzzaction{}
+%
+% each call to zz will have to def myzzaction appropriately
+\def\zz#1{\def\zzsep{}\zzz#1\relax}
+\def\zzz#1{\ifx\relax#1\else\def\zzsep{\myzzaction}#1\zzsep\expandafter\zzz\fi}
+%This is used to ``underline'' text, like with a typewriter.
+%
+\def\zzd#1{\def\zzsep{}\zzzd#1\relax}
+\def\zzzd#1{\ifx\relax#1\else\zzsep\def\zzsep{\myzzaction}#1\expandafter\zzzd\fi}
+%This is used to ``split'' text, as when spelling.
+%============================================
+% Create a new speaker command
+\newcommand\definenewnamec[2]{%
+\global\expandafter\newcommand\csname y#1\endcsname{#2}
+}
+% Redefine a speaker command
+\newcommand\redefinenewnamec[2]{%
+\global\expandafter\renewcommand\csname y#1\endcsname{#2}
+}
+%============================================
+%A : role
+\newcommand{\speaker}[1]{%
+\par\MakeUppercase{#1}:~\ignorespaces
+}
+%B (A) : role (name)
+\newcommand{\speakerb}[2][]{%
+  \speaker{#2 (#1)}
+}
+% A B : name role
+\newcommand{\speakerc}[2]{%
+  \speaker{#1\ #2}
+}
+%item value
+\newcommand{\speakerd}[2]{%
+\par\makebox[8em][r]{\MakeUppercase{#1:}}\hspace{3em}\MakeUppercase{#2}}
+%heading
+\newcommand{\speakere}[1]{%
+\bigskip\ \hfill{#1}\hfill\ \par\bigskip\bigskip
+}
+%long way of underline using tt
+\newcommand\ud[1]{#1\llap{\raisebox{-1.2ex}{-}}}
+%
+%+++++++++++++++++++++++++
+\newcommand{\commentary}[1]{\noindent[{#1}]\par}
+%+++++++++++++++++++++++++
+
+
+%~ from unisugar package:
+%make a command using to end-of-line as its (one) parameter
+\newcommand*{\toEolnCommand}[2]{%
+  \newcommand*{#1}{%
+    \begingroup
+    \escapechar=`\\%
+    \catcode\endlinechar=\active
+    \csname\string#1\endcsname
+  }%
+  \begingroup%
+  \escapechar=`\\%
+  \lccode`\~=\endlinechar
+  \lowercase{%
+    \expandafter\endgroup
+    \expandafter\def\csname\string#1\endcsname##1~%
+  }{\endgroup#2\space}%
+}
+
+%\toEolnCommand\toEolnSection{\section{#1}}
+\toEolnCommand\toEolnComment{\comm{#1}}
+\toEolnCommand\toEolnDescription{\tg{#1}}
+\toEolnCommand\toEolnMatter{\tm{#1}}
+\toEolnCommand\toEolnCourt{\tct{#1}}
+\toEolnCommand\toEolnBench{\tben{#1}}
+\toEolnCommand\toEolnDate{\tddate{#1}}
+
+
+
+
+%¶
+%adapted from unisugar package:
+%make ¶ an escape character
+\catcode"B6=11%catcode for letter (unisugar package assigns a unicode char here)
+\edef\¶{¶}
+\catcode"B6=0%escape character and control sequence
+
+%===================================
+
+% Continuation
+\newcommand¶tc{\speaker{the court}}
+\newcommand¶td{\speaker{defendant}}
+\newcommand¶tp{\speaker{plaintiff}}
+\newcommand¶tde{\speaker{defence}}
+\newcommand¶tpr{\speaker{prosecution}}
+\newcommand¶tap{\speaker{appellant}}
+\newcommand¶tre{\speaker{respondent}}
+
+\newcommand¶tw{\speaker{witness}}
+\newcommand¶ttr{\speaker{translator}}
+\newcommand¶tj{\speaker{jury}}
+\newcommand¶tdd{\speaker{counsel (def)}}
+\newcommand¶tpp{\speaker{counsel (pl)}}
+\newcommand¶comm[1]{\commentary{#1}}
+\newcommand¶tm[1]{\speakerd{case}{#1}}
+\newcommand¶tct[1]{\speakerd{court}{#1}}
+\newcommand¶tben[1]{\speakerd{bench}{#1}}
+\newcommand¶tddate[1]{\speakerd{date}{#1}\par\bigskip}
+%long way of tt underlining::
+%\newcommand¶ttran{\speakere{\ud{T}\ud{r}\ud{a}\ud{n}\ud{s}\ud{c}\ud{r}\ud{i}\ud{p}\ud{t}}}%
+%shorter way: zz{}
+\newcommand¶ttran{\renewcommand\myzzaction{\zzaction}\speakere{\zz{Transcript}}}%
+\newcommand¶thead[1]{\renewcommand\myzzaction{\zzaction}\speakere{\zz{#1}}}%
+\newcommand¶tcomm[1]{\toEolnComment{#1}}
+\newcommand¶tgg[1]{\toEolnDescription{#1}}
+\newcommand¶tmm[1]{\toEolnMatter{#1}}
+\newcommand¶tcrt[1]{\toEolnCourt{#1}}
+\newcommand¶tbench[1]{\toEolnBench{#1}}
+\newcommand¶tdate[1]{\toEolnDate{#1}}
+\newcommand¶tname[2]{\definenewnamec{#1}{\speaker{#2}}}% a=B
+\newcommand¶tnamer[2]{\redefinenewnamec{#1}{\speaker{#2}}}% a=C
+
+\newcommand¶tem[1]{\renewcommand\myzzaction{\zzaction}\zz{#1}}%
+\newcommand¶temm[1]{\renewcommand\myzzaction{\zzactionb}\zz{#1}}%
+\newcommand¶temmm[1]{\renewcommand\myzzaction{\zzactionc}\zz{#1}}%
+\newcommand¶tspell[1]{\renewcommand\myzzaction{-}\zzd{#1}}%
+
+% Introduction
+\newcommand¶tcc[1]{\speakerb[#1]{the court}}
+\newcommand¶tdx[1]{\speakerb[#1]{defendant}}
+\newcommand¶tpx[1]{\speakerb[#1]{plaintiff}}
+\newcommand¶tdex[1]{\speakerb[#1]{defence}}
+\newcommand¶tprx[1]{\speakerb[#1]{prosecution}}
+\newcommand¶tapx[1]{\speakerb[#1]{appellant}}
+\newcommand¶trex[1]{\speakerb[#1]{respondent}}
+
+\newcommand¶tww[1]{\speakerb[#1]{witness}}
+\newcommand¶ttt[1]{\speakerb[#1]{translator}}
+\newcommand¶tddd[1]{\speakerb[#1]{counsel for the defendant}}
+\newcommand¶tppp[1]{\speakerb[#1]{counsel for the plaintiff}}
+\newcommand¶tdee[1]{\speakerc{#1}{for the defence}}
+\newcommand¶tprr[1]{\speakerc{#1}{for the prosecution}}
+\newcommand¶tapp[1]{\speakerc{#1}{for the appellant}}
+\newcommand¶tree[1]{\speakerc{#1}{for the respondent}}
+
+% Ancillary command
+\newcommand\descmarker{=}
+\newcommand\gendesc[1]{\par{\begin{center}\descmarker\MakeUppercase{#1}\descmarker\end{center}}}
+\newcommand\gendescb[1]{[\MakeUppercase{#1}]}
+\newcommand\gendescc[1]{\par{\begin{center}\MakeUppercase{#1}\end{center}}}
+\newcommand\gendescd[1]{\par\MakeUppercase{#1}}
+%Description
+\newcommand¶tbreak{\gendescc{+++++++++++++++++++}}
+\newcommand¶tend{\bigskip\bigskip\gendescc{--*****--}}
+%
+\newcommand¶tadjourn{\gendescd{court adjourns~}}
+\newcommand¶tresume{\gendescd{court resumes~}}
+\newcommand¶tv{\gendesc{voices overlapping}}
+\newcommand¶ti{\gendescb{inaudible}}
+\newcommand¶tim{\gendescb{mumbles}}
+\newcommand¶tin{\gendescb{incompehensible}}
+\newcommand¶tis{\gendescb{softly}}
+\newcommand¶tlp{\gendescb{long pause}}
+\newcommand¶tu{\gendescb{?}}%uncertain
+\newcommand¶tl{\gendescb{speaks in foreign language}}
+\newcommand¶ts{\gendesc{shouting}}%e.g. protesters
+\newcommand¶tf{\gendesc{confusion in court}}
+\newcommand¶tg[1]{\gendesc{#1}}%general purpose description
+\newcommand¶tlol{\gendesc{laughter in court}}
+\newcommand¶ta{\ldots [interrupted]}
+\newcommand¶tb{\ldots [continues]~}
+%spelling
+\newcommand\honourstringen{Honour}
+\newcommand\honourstringus{Honor}
+\newcommand\honourstring{}
+%locale
+\newcommand\setlocaleen{%
+    \renewcommand\honourstring{\honourstringen}
+}
+\newcommand\setlocaleus{%
+    \renewcommand\honourstring{\honourstringus}
+}
+%Settings - locale
+\setlocaleen
+%Common phrases
+\newcommand¶ml{My Lord}
+\newcommand¶mly{My Lady}
+\newcommand¶mlu{Your Lordship}
+\newcommand¶mlyu{Your Ladyship}
+\newcommand¶alp{as Your Lordship pleases}
+\newcommand¶alpy{as Your Ladyship pleases}
+\newcommand¶alc{as the Court pleases}
+\newcommand¶alh{as Your \honourstring\ pleases}
+\newcommand¶yh{Your \honourstring}
+\newcommand¶yw{Your Worship}
+\newcommand¶pc{May it please the Court}
+
+
+
+%==============================================
+\begin{document}
+
+\noindent Example:
+
+¶tmm party a and party b
+¶tcrt supreme court of xyz
+¶tbench name j
+¶tdate 07 aug 2020
+¶ttran
+¶comm{Something is about to happen.}
+¶tcomm This comment is defined by its line, rather than by braces.
+
+¶tcc{judge gavel} How do you plead? ¶td I didn't do it. ¶tp Oh yes he did. ¶tdd I object! ¶tc Sustained! ¶tw Oh no he didn't. ¶tj  Not guilty! 
+
+¶comm{The case is finished.} ¶td I'm so happy. Now to give a long speech thanking the jury: \ldots ¶tp quite quickly. Quietly quietly. ¶tu 
+ ¶tww{professor knowall} Yes, that's right. ¶tc You may go now. Next case! ¶tpp ¶ti ¶tc Switch on your microphone, Counsel. ¶tv ¶tppp{Slicker Greenhorn} I apologise for that,  ¶yh. I'm here to represent the plaintiff in ¶ta ¶ts ¶tc Order in the Court! ¶tpp ¶tb to represent ¶tc Remove that rapscallion from the rafters! Call the next witness. ¶tww{el zorro} ¶tl ¶ttr I am known as The Fox ¶tu ¶tpp We know who you are. Now, ¶tlol ¶tc Time for a short recess. ¶tadjourn 11:18 am ¶tbreak ¶tresume 11:20 am ¶tc Now, you realise you are still under oath? ¶tw Yes ¶yh. ¶tend
+
+The foregoing was produced by:
+\begin{framed}\begin{quotation}
+¶¶tmm party a and party b\\
+¶¶tcrt supreme court of xyz\\
+¶¶tbench name j\\
+¶¶tdate 07 aug 2020\\
+¶¶ttran\\
+¶¶comm\{Something is about to happen.\}\\
+¶¶tcomm This comment is defined by its line, rather than by braces.\\
+\ \\
+¶¶tcc\{judge gavel\} How do you plead? ¶¶td I didn't do it. ¶¶tp Oh yes he did. ¶¶tdd I object! ¶¶tc Sustained! ¶¶tw Oh no he didn't. ¶¶tj  Not guilty!\\ 
+\ \\
+¶¶comm\{The case is finished.\} ¶¶td I'm so happy. Now to give a long speech thanking the jury: \textbackslash ldots ¶¶tp quite quickly. Quietly quietly. ¶¶tu 
+ ¶¶tww\{professor knowall\} Yes, that's right. ¶¶tc You may go now. Next case! ¶¶tpp ¶¶ti ¶¶tc Switch on your microphone, Counsel. ¶¶tv ¶¶tppp\{Slicker Greenhorn\} I apologise for that,  ¶¶yh. I'm here to represent the plaintiff in ¶¶ta ¶¶ts ¶¶tc Order in the Court! ¶¶tpp ¶¶tb to represent ¶¶tc Remove that rapscallion from the rafters! Call the next witness. ¶¶tww\{el zorro\} ¶¶tl ¶¶ttr I am known as The Fox ¶¶tu ¶¶tpp We know who you are. Now, ¶¶tlol ¶¶tc Time for a short recess. ¶¶tadjourn 11:18 am ¶¶tbreak ¶¶tresume 11:20 am ¶¶tc Now, you realise you are still under oath? ¶¶tw Yes ¶¶yh. ¶¶tend
+\end{quotation}\end{framed}
+
+
+\newpage
+¶thead{INTRODUCTION} This template, more-or-less standalone, and inspired by some answers to a question on \TeX\ Stack Exchange,\footnote{{https://tex.stackexchange.com/questions/557680/fastest-typed-latex-template-for-live-conversations}} provides some shorthand commands for touch-type transcription of a (fast-moving) conversation in court, with the character \ccol{¶¶} being defined as an escape character to take some of the typing load off the \ccol{\textbackslash}\ key (albeit off the keyboard). To get an ordinary ¶¶, double it like this ¶¶¶¶. And \ccol{\textbackslash} can still be used as the escape character. This \ccol{¶¶} method will eventually clash with some command or package somewhere if any are added into the code (or kernel), but, within its own space, it works well enough. Familiarity with \TeX\  layout is an advantage.
+
+Speaker names can be defined 'on-the-fly', and text formatting is embedded within the commands, so that formatting does not have to be typed separately.
+
+To reduce typing even further, some commands that take a parameter can be typed on their own line without the need for any \{ or \}, with the rest of the line being taken as the parameter.
+
+\ccol{¶¶tcomm This is a comment}
+
+¶tcomm This is a comment
+
+Otherwise, the commands can follow each other inline, as the context allows. The cryptic \ccol{¶¶tpr ¶¶yh s, if I may take you to section \ldots ¶¶tc Yes, Mr Crown. ¶¶tpr 42 of the Act.} produces: ¶tpr ¶yh s, if I may take you to section \ldots ¶tc Yes, Mr Crown. ¶tpr 42 of the Act.
+
+\begin{framed}\begin{quotation}Trial by transcript can seldom be an adequate representation of an oral trial before a judge or an oral trial before a judge and jury.
+
+-- McHugh J, in \textit{Rosenberg v Percival} [2001] HCA 18; (2001) 205 CLR 434 at 448.
+\end{quotation}\end{framed}
+
+
+\begin{framed}\begin{quotation}
+¶tname{ross}{ms. ross} ¶yross  Mr. Chief Justice, and may it please the Court: It is a fundamental principle of trademark law that no party can obtain a trademark for a generic term like "wine," "cotton," or "grain."
+
+-- Transcript of oral argument, 04 May 2020, page 3 lines 10-15, in  \textit{United States Patent and Trademark Office versus Booking.com}\\
+{\small\url{https://www.supremecourt.gov/oral_arguments/argument_transcripts/2019/19-46_bq7d.pdf}}
+\end{quotation}\end{framed}
+
+\newpage
+\section{Commands}
+
+\subsection{Speakers}
+
+\begin{tabular}{ll}
+Command & Display \\
+¶¶tc & ¶tc \\
+¶¶tp & ¶tp \\ 
+¶¶tpp & ¶tpp \\ 
+¶¶td & ¶td \\ 
+¶¶tdd & ¶tdd \\ 
+¶¶tpr & ¶tpr \\ 
+¶¶tde & ¶tde \\ 
+¶¶tw & ¶tw \\ 
+¶¶ttr & ¶ttr \\ 
+¶¶tj & ¶tj \\ 
+¶¶tap & ¶tap \\ 
+¶¶tre & ¶tre \\ 
+\end{tabular}
+
+\newpage
+\subsection{Speaking}
+\begin{tabular}{ll}
+¶¶ta & ¶ta \\ 
+¶¶tb & ¶tb \\ 
+¶¶ti & ¶ti \\ 
+¶¶tim & ¶tim \\ 
+¶¶tin & ¶tin \\ 
+¶¶tis & ¶tis \\ 
+¶¶tlp & ¶tlp \\
+¶¶tl & ¶tl \\ 
+¶¶tu & ¶tu \\
+\end{tabular}
+\bigskip
+
+\noindent\begin{tabular}{ll}
+¶¶tem\{emphasis\} & ¶tem{emphasis} \\
+¶¶temm\{more\textbackslash\ emphasis\} & ¶temm{more emphasis} \\
+¶¶temmm\{strongest\textbackslash\ emphasis\} & ¶temmm{strongest\ emphasis} \\
+¶¶tspell\{spell\} & ¶tspell{spell} \\ 
+\end{tabular}
+
+
+
+\newpage
+\subsection{Phrases}
+\begin{tabular}{ll}
+¶¶alc & ¶alc \\ 
+¶¶alh & ¶alh \\ 
+¶¶alp & ¶alp \\ 
+¶¶alpy & ¶alpy \\ 
+¶¶ml & ¶ml \\ 
+¶¶mlu & ¶mlu \\
+¶¶mly & ¶mly \\ 
+¶¶mlyu & ¶mlyu \\ 
+¶¶pc & ¶pc \\ 
+¶¶yh & ¶yh \\ 
+¶¶yw & ¶yw \\ 
+\end{tabular}
+
+\newpage
+\subsection{Stages}
+\begin{tabular}{ll}
+¶¶tadjourn & ¶tadjourn \\
+¶¶tresume & ¶tresume \\ 
+\end{tabular}
+
+\newpage
+\subsection{Structure}
+\ \par ¶¶tran\\ ¶ttran
+¶¶thead\{HEADING\}\\ ¶thead{HEADING}
+
+¶¶tmm casename
+¶tmm casename
+
+¶¶tcrt court name
+¶tcrt court name
+
+¶¶tbench presiding judge(s)/justice(s)
+¶tbench presiding judge(s)/justice(s)
+
+¶¶tdate hearing date
+¶tdate hearing date
+
+
+\newpage
+
+\subsection{Events}
+\ \par
+¶¶tg\{Generic description\}
+
+¶tg{Generic description}
+
+¶¶tgg a generic description ¶tgg a generic description
+
+¶¶tbreak ¶tbreak
+¶¶tf ¶tf
+¶¶tlol ¶tlol
+¶¶ts ¶ts
+¶¶tv ¶tv
+¶¶tend ¶tend
+
+\newpage
+
+\subsection{\{\} parameter commands}
+
+\begin{tabular}{ll}
+Command & Display \\
+¶¶comm\{Comment\} & ¶comm{Comment} \\ 
+\end{tabular}
+\bigskip
+
+\noindent These are for use on first introduction. Subsequently, role or defined name may be used.\bigskip
+
+\noindent\begin{tabular}{ll}
+Command & Display \\
+¶¶tcc\{name\} & ¶tcc{name} \\ 
+\\
+¶¶tpx\{name\} & ¶tpx{name} \\ 
+¶¶tppp\{name\} & ¶tppp{name} \\ 
+¶¶tdx\{name\} & ¶tdx{name} \\ 
+¶¶tddd\{name\} & ¶tddd{name} \\ 
+\\
+¶¶tprr\{name\} & ¶tprr{name} \\ 
+¶¶tprx\{name\} & ¶tprx{name} \\ 
+¶¶tdee\{name\} & ¶tdee{name} \\ 
+¶¶tdex\{name\} & ¶tdex{name} \\ 
+\\
+¶¶tww\{name\} & ¶tww{name} \\ 
+¶¶ttt\{name\} & ¶ttt{name} \\ 
+\\
+¶¶tapp\{name\} & ¶tapp{name} \\ 
+¶¶tapx\{name\} & ¶tapx{name} \\ 
+
+¶¶tree\{name\} & ¶tree{name} \\ 
+¶¶trex\{name\} & ¶trex{name} \\ 
+\end{tabular}
+\bigskip
+
+\subsection{Dynamic names}
+
+For creating names on-the-fly,
+
+¶¶tname\{a\}\{b\} creates a command ¶¶ya which expands to ¶tname{a}{b}¶ya
+
+So that ¶¶tname\{who\}\{the doctor\}, ¶¶tname\{whit\}\{leela\}, and ¶¶tname\{dog\}\{k9\} create 
+¶¶ywho, ¶¶ywhit and ¶¶ydog which expand to ¶tname{who}{the doctor} ¶ywho ¶tname{whit}{leela} ¶ywhit  ¶tname{dog}{k9} \par and ¶ydog
+
+A defined name can be re-defined with ¶¶tnamer{}, so that ¶¶tnamer\{who\}\{clara\} resets ¶¶ywho such that it now produces ¶tnamer{who}{clara}¶ywho
+
+\newpage
+
+\subsection{Rest-of-line parameter commands}
+
+¶¶tcomm This text is on a line
+
+¶tcomm  This text is on a line
+
+¶¶tgg a generic description
+
+¶tgg a generic description
+
+¶tend
+
+
+\end{document}
